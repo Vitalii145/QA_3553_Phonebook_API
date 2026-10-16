@@ -4,6 +4,7 @@ import requests
 import pytest
 from confiq import TEST_USER_PASSWORD, TEST_USER_EMAIL, API_BASE_URL
 from models.user import User
+from tests.conftest import new_user
 
 
 def test_login_with_valid_credentials_return_token():
@@ -37,3 +38,11 @@ def test_login_with_invalid_value(username, password):
     response = requests.post(f"{API_BASE_URL}/v1/user/login/usernamepassword", json=payload)
     assert response.status_code == 401
     assert "login or password incorrect" in response.json()["message"].lower()
+
+def test_login_with_unknow_user(new_user):
+    payload = asdict(new_user)
+
+    response = requests.post(f"{API_BASE_URL}/v1/user/login/usernamepassword", json=payload)
+    assert response.status_code == 401
+    assert "incorrect" in response.json()["message"]
+    assert response.json()["error"]=="Unauthorized"
