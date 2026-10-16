@@ -4,7 +4,7 @@ import pytest
 import requests
 
 from confiq import API_BASE_URL, TEST_USER_EMAIL, TEST_USER_PASSWORD
-
+from models.user import User
 
 
 @pytest.fixture(scope="session")
@@ -27,3 +27,7 @@ def auth_headers(auth_token):
 @pytest.fixture
 def unique_email():
     return f"student_{uuid.uuid4().hex[:8]}@gmail.com"
+
+@pytest.fixture
+def new_user(unique_email):
+    return User(username=unique_email, password="Password658@")
