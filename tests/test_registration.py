@@ -4,8 +4,8 @@ from confiq import API_BASE_URL
 from exploration import response
 
 
-def test_registration_success():
-    unique_email = f"student_{uuid.uuid4().hex[:8]}@gmail.com"
+def test_registration_success(unique_email):
+    # unique_email = f"student_{uuid.uuid4().hex[:8]}@gmail.com"
 
     payload={
         "username": unique_email,
@@ -30,8 +30,8 @@ def test_registration_failure():
     assert body["error"]=="Bad Request"
     assert body["path"]=="/v1/user/registration/usernamepassword"
 
-def test_registration_password_without_uppercase():
-    unique_email = f"student_{uuid.uuid4().hex[:8]}@gmail.com"
+def test_registration_password_without_uppercase(unique_email):
+    # unique_email = f"student_{uuid.uuid4().hex[:8]}@gmail.com"
     payload = {
         "username": unique_email,
         "password": "password658$"
@@ -41,8 +41,8 @@ def test_registration_password_without_uppercase():
     assert "password" in response.json()["message"]
 
 
-def test_registration_password_too_short():
-    unique_email = f"student_{uuid.uuid4().hex[:8]}@gmail.com"
+def test_registration_password_too_short(unique_email):
+    # unique_email = f"student_{uuid.uuid4().hex[:8]}@gmail.com"
     payload = {
         "username": unique_email,
         "password": "Pas658$"

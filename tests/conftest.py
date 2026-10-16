@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 import requests
 
@@ -21,3 +23,7 @@ def auth_token():
 @pytest.fixture
 def auth_headers(auth_token):
     return {"Authorization": f"Bearer {auth_token}"}
+
+@pytest.fixture
+def unique_email():
+    return f"student_{uuid.uuid4().hex[:8]}@gmail.com"
