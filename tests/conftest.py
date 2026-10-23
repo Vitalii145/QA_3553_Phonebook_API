@@ -6,6 +6,7 @@ import pytest
 import requests
 from pyexpat.errors import messages
 
+from API_client.Client import APIClient
 from confiq import API_BASE_URL, TEST_USER_EMAIL, TEST_USER_PASSWORD
 from models.contact import Contact
 from models.user import User
@@ -47,12 +48,26 @@ def contact_data():
         description="autotes"
     )
 @pytest.fixture
-def created_contact(auth_headers, contact_data):
-    response = requests.post(f"{API_BASE_URL}/v1/contacts",json=asdict(contact_data), headers=auth_headers)
+def created_contact(api_client, contact_data):
+    response = api_client.post("/v1/contacts",json=asdict(contact_data))
     assert response.status_code == 200
     message = response.json()["message"]
     contact_id = message.split(": ")[1]
 
     created = asdict(contact_data)
     created["id"] = contact_id
-    return created
+
+
+    yield created
+    list_response = api_client.get("/v1/contacts")
+    existing = [contact["id"] for contact in list_response.json()["contacts"]]
+    if contact_id in existing:
+        delete_response = api_client.delete("/v1/contacts/{contact_id}")
+        assert delete_response.status_code == 200
+
+
+@pytest.fixture
+def api_client(auth_token):
+   client = APIClient(API_BASE_URL, token=auth_token)
+   yield client
+   client.close()
